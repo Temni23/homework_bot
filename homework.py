@@ -40,13 +40,13 @@ HOMEWORK_VERDICTS = {
 
 def check_tokens():
     """Проверяет наличие токенов и данных о чате."""
-    if TELEGRAM_TOKEN == None:
+    if TELEGRAM_TOKEN is None:
         logger.critical('Отсутствует TELEGRAM_TOKEN, проверьте файл .env')
         raise Exception('Отсутствует TELEGRAM_TOKEN, проверьте файл .env')
-    if PRACTICUM_TOKEN == None:
+    if PRACTICUM_TOKEN is None:
         logger.critical('Отсутствует PRACTICUM_TOKEN, проверьте файл .env')
         raise Exception('Отсутствует PRACTICUM_TOKEN, проверьте файл .env')
-    if TELEGRAM_CHAT_ID == None:
+    if TELEGRAM_CHAT_ID is None:
         logger.critical('Отсутствует TELEGRAM_CHAT_ID, проверьте файл .env')
         raise Exception('Отсутствует TELEGRAM_CHAT_ID, проверьте файл .env')
 
@@ -61,7 +61,7 @@ def send_message(bot, message):
 
 
 def get_api_answer(timestamp):
-    """Делает запрос к API практикума, возвращает ответ, изменяет параметр TIME."""
+    """Делает запрос к API практикума, возвращает ответ."""
     payload = {'from_date': timestamp}
     try:
         response = requests.get(ENDPOINT, headers=HEADERS,
@@ -87,7 +87,8 @@ def check_response(response):
         logger.error('В ответе API отсутствует ключ homeworks ', response)
         send_message(bot=telegram.Bot(token=TELEGRAM_TOKEN),
                      message='В ответе API отсутствует ключ homeworks')
-        raise PracticumApiErrorException('В ответе API отсутствует ключ homeworks')
+        raise PracticumApiErrorException('В ответе API '
+                                         'отсутствует ключ homeworks')
     elif not isinstance(response["homeworks"], list):
         logger.error('Неверный тип данных у элемента homeworks ', response)
         send_message(bot=telegram.Bot(token=TELEGRAM_TOKEN),
