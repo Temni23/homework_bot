@@ -49,6 +49,7 @@ def check_tokens():
     if TELEGRAM_CHAT_ID is None:
         logger.critical('Отсутствует TELEGRAM_CHAT_ID, проверьте файл .env')
         raise Exception('Отсутствует TELEGRAM_CHAT_ID, проверьте файл .env')
+    return True
 
 
 def send_message(bot, message):
@@ -94,7 +95,8 @@ def check_response(response):
         send_message(bot=telegram.Bot(token=TELEGRAM_TOKEN),
                      message='Неверный тип данных у элемента homeworks')
         raise TypeError('Неверный тип данных у элемента homeworks')
-    return True
+    homeworks = response.get('homeworks')
+    return homeworks
 
 
 def parse_status(homework):
@@ -117,21 +119,20 @@ def parse_status(homework):
 
 def main():
     """Основная логика работы бота."""
+    timestamp = int(time.time())
+    temp_error = None
     if check_tokens():
         bot = telegram.Bot(token=TELEGRAM_TOKEN)
         logger.debug('Бот запущен')
-        timestamp = int(time.time())
-        temp_error = None
         while True:
             try:
                 response = get_api_answer(timestamp)
                 logger.debug('Дынные запрошены у API')
-                if len(response.get('homeworks')) > 0 and check_response(response):
-                    send_message(bot, parse_status(response.get('homeworks')[0]))
+                homeworks = check_response(response)
+                if (len(response.get('homeworks'))) > 0:
+                    send_message(bot, parse_status(homeworks[0]))
                 else:
                     logger.debug("Статусы не обновились на данный момент.")
-                timestamp = response['current_date']
-                time.sleep(RETRY_PERIOD)
 
             except Exception as error:
                 message = f'Сбой в работе программы: {error}'
@@ -139,6 +140,11 @@ def main():
                 if error != temp_error:
                     bot.send_message(message)
                 temp_error = error
+            finally:
+                current_timestamp = int(time.time())
+                time.sleep(RETRY_PERIOD)
+    else:
+        sys.exit()
 
 
 if __name__ == '__main__':
