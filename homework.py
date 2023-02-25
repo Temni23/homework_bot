@@ -39,7 +39,7 @@ HOMEWORK_VERDICTS = {
 
 
 def check_tokens():
-    '''Проверяет наличие токенов и данных о чате'''
+    """Проверяет наличие токенов и данных о чате."""
     if TELEGRAM_TOKEN == None:
         logger.critical('Отсутствует TELEGRAM_TOKEN, проверьте файл .env')
         raise Exception('Отсутствует TELEGRAM_TOKEN, проверьте файл .env')
@@ -52,7 +52,7 @@ def check_tokens():
 
 
 def send_message(bot, message):
-    '''Отправка сообщения от бота пользователю'''
+    """Отправка сообщения от бота пользователю."""
     try:
         bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
         logger.debug('Сообщение отправлено')
@@ -61,7 +61,7 @@ def send_message(bot, message):
 
 
 def get_api_answer(timestamp):
-    '''Делает запрос к API практикума, возвращает ответ, изменяет параметр TIME'''
+    """Делает запрос к API практикума, возвращает ответ, изменяет параметр TIME."""
     payload = {'from_date': timestamp}
     try:
         response = requests.get(ENDPOINT, headers=HEADERS,
@@ -76,10 +76,8 @@ def get_api_answer(timestamp):
         raise PracticumApiErrorException(error)
 
 
-
-
 def check_response(response):
-    '''Проверяет полученный от API ответ на соответствие документации'''
+    """Проверяет полученный от API ответ на соответствие документации."""
     if not isinstance(response, dict):
         logger.error('Response не является словарем ', response)
         send_message(bot=telegram.Bot(token=TELEGRAM_TOKEN),
@@ -99,7 +97,7 @@ def check_response(response):
 
 
 def parse_status(homework):
-    '''Проверяет статус работы возвращает строку для сообщения'''
+    """Проверяет статус работы возвращает строку для сообщения."""
     try:
         if 'homework_name' not in homework:
             logger.error('В ответе API нет ключа homework_name ', homework)
