@@ -141,7 +141,7 @@ def main():
                     bot.send_message(message)
                 temp_error = error
             finally:
-                current_timestamp = int(time.time())
+                timestamp = int(time.time())
                 time.sleep(RETRY_PERIOD)
     else:
         sys.exit()
