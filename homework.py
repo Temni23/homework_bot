@@ -74,6 +74,7 @@ def get_api_answer(timestamp):
     """Делает запрос к API практикума, возвращает ответ."""
     payload = {'from_date': timestamp}
     try:
+        logger.debug('Пробую запросить данные от API')
         response = requests.get(ENDPOINT, headers=HEADERS,
                                 params=payload)
         if response.status_code != HTTPStatus.OK:
@@ -127,7 +128,7 @@ def main():
     while True:
         try:
             response = get_api_answer(timestamp)
-            logger.debug('Дынные запрошены у API')
+            logger.debug('Дынные получены от API')
             homeworks = check_response(response)
             if homeworks:
                 message = parse_status(homeworks[0])
